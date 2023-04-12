@@ -1,0 +1,5 @@
+.idea
+/vendor/
+.phpunit.cache
+/tests/LaravelApp/bootstrap/cache/**
+/coverage/
