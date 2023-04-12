@@ -1,0 +1,42 @@
+{
+  "name": "dam-bal/eloquentity",
+  "description": "Eloquent entities (mapping, persisting)",
+  "license": "MIT",
+  "type": "library",
+  "authors": [
+    {
+      "name": "Damian Balandowski",
+      "email": "d.balandowski@icloud.com"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Eloquentity\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "Eloquentity\\Tests\\": "tests/"
+    }
+  },
+  "require": {
+    "php": "^8.1",
+    "symfony/property-info": "^6.2",
+    "phpstan/phpdoc-parser": "^1.16",
+    "phpdocumentor/reflection-docblock": "^5.3",
+    "illuminate/database": "^10.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.0",
+    "phpstan/phpstan": "^1.10",
+    "squizlabs/php_codesniffer": "^3.7",
+    "calebporzio/sushi": "^2.4",
+    "mockery/mockery": "^1.5",
+    "laravel/framework": "^10.0"
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
