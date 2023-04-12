@@ -6,3 +6,14 @@
 Eloquentity allows you to map eloquent models to entities, any changes made to those entities can be persisted (including relationships), and you can even persist new entities.
 
 > This is still under development
+
+## Install
+
+```sh
+composer require dam-bal/eloquentity
+```
+
+## Release History
+
+* 0.1.0
+    * Initial release
