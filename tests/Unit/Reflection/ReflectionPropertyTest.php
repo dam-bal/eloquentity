@@ -21,20 +21,6 @@ final class ReflectionPropertyTest extends TestCase
 
         self::assertEquals(null, $propertyToTest->getCollectionValueType());
     }
-
-    public function testHasAttributeReturnsTrueIfPropertyHasAttribute(): void
-    {
-        $propertyToTest = new ReflectionProperty(EntityWithIdAttribute::class, 'id');
-
-        self::assertTrue($propertyToTest->hasAttribute(Id::class));
-    }
-
-    public function testHasAttributeReturnsFalseIfPropertyDoesNotHaveAttribute(): void
-    {
-        $propertyToTest = new ReflectionProperty(EntityWithoutIdAttribute::class, 'id');
-
-        self::assertFalse($propertyToTest->hasAttribute(Id::class));
-    }
 }
 
 final class Entity

@@ -175,8 +175,9 @@ final class Eloquentity
 
             $entityProperties = array_filter(
                 $entityClassReflection->getProperties(),
-                static function (ReflectionProperty $property) use ($entity): bool {
-                    return $property->isInitialized($entity) && !$property->hasAttribute(Id::class);
+                static function (ReflectionProperty $property) use ($entity, $model): bool {
+                    return $property->isInitialized($entity) &&
+                        $property->getName() !== Str::camel($model->getKeyName());
                 }
             );
 

@@ -25,38 +25,6 @@ final class ReflectionClassTest extends TestCase
 
         self::assertEquals(spl_object_id($properties1[0]), spl_object_id($properties2[0]));
     }
-
-    public function testGetPropertiesWithAttributeCachesProperties(): void
-    {
-        $classReflection = ReflectionClass::create(ClassWithIdAttribute::class);
-
-        $propertiesWithIdAttribute1 = $classReflection->getPropertiesWithAttribute(Id::class);
-        $propertiesWithIdAttribute2 = $classReflection->getPropertiesWithAttribute(Id::class);
-
-        self::assertEquals(
-            spl_object_id($propertiesWithIdAttribute1[0]),
-            spl_object_id($propertiesWithIdAttribute2[0])
-        );
-    }
-
-    public function testGetPropertiesWithAttributeReturnsPropertiesWithAttribute(): void
-    {
-        $classReflection = ReflectionClass::create(ClassWithIdAttribute::class);
-
-        $propertiesWithIdAttribute = $classReflection->getPropertiesWithAttribute(Id::class);
-
-        self::assertNotEmpty($propertiesWithIdAttribute);
-        self::assertEquals('id', $propertiesWithIdAttribute[0]->getName());
-    }
-
-    public function testGetPropertiesWithAttributeReturnsEmptyArrayWhenClassDoesNotHavePropertiesWithAttribute(): void
-    {
-        $classReflection = ReflectionClass::create(ClassWithProperty::class);
-
-        $propertiesWithIdAttribute = $classReflection->getPropertiesWithAttribute(Id::class);
-
-        self::assertEmpty($propertiesWithIdAttribute);
-    }
 }
 
 final class ClassWithProperty
