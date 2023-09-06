@@ -11,9 +11,6 @@ final class ReflectionProperty extends \ReflectionProperty
     /** @var array<string, class-string|null> */
     private static array $types = [];
 
-    /** @var array<string, bool> */
-    private static array $hasAttribute = [];
-
     /**
      * @return class-string|null
      */
@@ -53,16 +50,5 @@ final class ReflectionProperty extends \ReflectionProperty
 
         /** @phpstan-ignore-next-line */
         return $type?->getClassName();
-    }
-
-    public function hasAttribute(string $attributeClass): bool
-    {
-        $index = sprintf('%s-%s-%s', $this->getDeclaringClass(), $this->getName(), $attributeClass);
-
-        if (isset(static::$hasAttribute[$index])) {
-            return static::$hasAttribute[$index];
-        }
-
-        return static::$hasAttribute[$index] = !empty($this->getAttributes($attributeClass));
     }
 }

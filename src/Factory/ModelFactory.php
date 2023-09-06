@@ -24,24 +24,12 @@ class ModelFactory
     {
         $entityClassReflection = ReflectionClass::create($entity::class);
 
-        $propertiesWithIdAttribute = $entityClassReflection->getPropertiesWithAttribute(Id::class);
-
-        if (empty($propertiesWithIdAttribute)) {
-            throw new EloquentityException(
-                sprintf(
-                    'Not able to find id property in "%s", please mark id property with "%s" attribute.',
-                    $entity::class,
-                    Id::class
-                )
-            );
-        }
-
-        $idProperty = $propertiesWithIdAttribute[0];
-
         $modelClassReflection = ReflectionClass::create($modelClass);
 
         /** @var T $model */
         $model = $modelClassReflection->newInstance();
+
+        $idProperty = $entityClassReflection->getProperty(Str::camel($model->getKeyName()));
 
         if ($idProperty->isInitialized($entity) && $idValue = $idProperty->getValue($entity)) {
             $model->{$model->getKeyName()} = $idValue;
@@ -49,9 +37,9 @@ class ModelFactory
 
         $entityProperties = array_filter(
             $entityClassReflection->getProperties(),
-            static function (ReflectionProperty $property) use ($entity, $model): bool {
+            static function (ReflectionProperty $property) use ($entity, $idProperty, $model): bool {
                 return $property->isInitialized($entity)
-                    && !$property->hasAttribute(Id::class)
+                    && $property->getName() !== $idProperty->getName()
                     && !$model->isRelation($property->getName());
             }
         );

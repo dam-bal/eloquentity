@@ -17,15 +17,6 @@ final class ModelFactoryTest extends MockeryTestCase
         $this->sut = new ModelFactory();
     }
 
-    public function testItThrowsExceptionWhenEntityDoesNotHavePropertyWithIdAttribute(): void
-    {
-        $entity = new EntityWithPropertyWithoutIdAttribute(1);
-
-        $this->expectException(EloquentityException::class);
-
-        $this->sut->create($entity, Model::class);
-    }
-
     public function testItDoesNotSetIdAttributeWhenItsNull(): void
     {
         $entity = new Entity(null, 'test');

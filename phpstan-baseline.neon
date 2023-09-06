@@ -21,11 +21,6 @@ parameters:
 			path: src/Reflection/ReflectionClass.php
 
 		-
-			message: "#^Unsafe access to private property Eloquentity\\\\Reflection\\\\ReflectionClass\\<T of object\\>\\:\\:\\$propertiesWithAttribute through static\\:\\:\\.$#"
-			count: 3
-			path: src/Reflection/ReflectionClass.php
-
-		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Reflection/ReflectionClass.php
