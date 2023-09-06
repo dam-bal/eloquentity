@@ -54,15 +54,4 @@ final class ReflectionProperty extends \ReflectionProperty
         /** @phpstan-ignore-next-line */
         return $type?->getClassName();
     }
-
-    public function hasAttribute(string $attributeClass): bool
-    {
-        $index = sprintf('%s-%s-%s', $this->getDeclaringClass(), $this->getName(), $attributeClass);
-
-        if (isset(static::$hasAttribute[$index])) {
-            return static::$hasAttribute[$index];
-        }
-
-        return static::$hasAttribute[$index] = !empty($this->getAttributes($attributeClass));
-    }
 }

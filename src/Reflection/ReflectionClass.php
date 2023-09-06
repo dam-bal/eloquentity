@@ -58,33 +58,4 @@ class ReflectionClass extends \ReflectionClass
 
         return static::$properties[$index] = $properties;
     }
-
-    /**
-     * @param class-string $attributeClass
-     * @return ReflectionProperty[]
-     * @throws ReflectionException
-     */
-    public function getPropertiesWithAttribute(string $attributeClass): array
-    {
-        $index = sprintf('%s-%s-%s', static::class, $this->getName(), $attributeClass);
-
-        if (isset(static::$propertiesWithAttribute[$index])) {
-            return static::$propertiesWithAttribute[$index];
-        }
-
-        $properties = $this->getProperties();
-
-        $propertiesWithAttribute = [];
-        foreach ($properties as $property) {
-            $attributes = $property->getAttributes($attributeClass);
-
-            if (empty($attributes)) {
-                continue;
-            }
-
-            $propertiesWithAttribute[] = $property;
-        }
-
-        return static::$propertiesWithAttribute[$index] = $propertiesWithAttribute;
-    }
 }
