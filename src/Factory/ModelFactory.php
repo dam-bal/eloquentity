@@ -27,7 +27,11 @@ class ModelFactory
         /** @var T $model */
         $model = $modelClassReflection->newInstance();
 
-        $idProperty = $entityClassReflection->getProperty(Str::camel($model->getKeyName()));
+        try {
+            $idProperty = $entityClassReflection->getProperty(Str::camel($model->getKeyName()));
+        } catch (ReflectionException) {
+            $idProperty = null;
+        }
 
         if ($idProperty?->isInitialized($entity) && $idValue = $idProperty->getValue($entity)) {
             $model->{$model->getKeyName()} = $idValue;
