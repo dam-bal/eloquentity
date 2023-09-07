@@ -2,8 +2,6 @@
 
 namespace Eloquentity\Processor;
 
-use Eloquentity\Collection\CollectionInterface;
-use Eloquentity\Collection\TrackedCollection;
 use Eloquentity\Factory\ModelFactory;
 use Eloquentity\Identity\Identity;
 use Eloquentity\Identity\IdentityStorage;
@@ -23,7 +21,8 @@ class RelationProcessor
     public function __construct(
         private readonly ModelFactory    $modelFactory,
         private readonly IdentityStorage $identityStorage
-    ) {
+    )
+    {
     }
 
     /**
@@ -33,7 +32,7 @@ class RelationProcessor
     {
         if (
             ($relation instanceof HasMany || $relation instanceof BelongsToMany || $relation instanceof MorphMany)
-            && $value instanceof CollectionInterface
+            && is_iterable($value)
         ) {
             $this->processRelationThatReturnsCollectionOfModels($value, $relation);
         }
@@ -49,7 +48,8 @@ class RelationProcessor
     private function processRelationThatReturnsModel(
         ?object                   $value,
         HasOne|BelongsTo|MorphOne $relation
-    ): void {
+    ): void
+    {
         $isRelationInstanceOfBelongsTo = $relation instanceof BelongsTo;
 
         if (!$value && $isRelationInstanceOfBelongsTo) {
@@ -71,38 +71,17 @@ class RelationProcessor
     }
 
     /**
-     * @template T of CollectionInterface
-     * @param CollectionInterface<T> $collection
+     * @template T
+     * @param iterable<T> $collection
      * @throws ReflectionException
      */
     private function processRelationThatReturnsCollectionOfModels(
-        CollectionInterface             $collection,
+        iterable                        $collection,
         HasMany|BelongsToMany|MorphMany $relation
-    ): void {
+    ): void
+    {
         foreach ($collection as $entity) {
             $this->addToRelation($entity, $relation);
-        }
-
-        if ($collection instanceof TrackedCollection) {
-            foreach ($collection->getDeletedItems() as $entity) {
-                $identityForObjectId = $this->identityStorage->getIdentityByObjectId(spl_object_id($entity));
-
-                if ($identityForObjectId && $relation instanceof BelongsToMany) {
-                    $relation->detach($identityForObjectId->model->getKey());
-
-                    continue;
-                }
-
-                if ($identityForObjectId) {
-                    $identityForObjectId->setDeleted();
-
-                    $relation
-                        ->whereKey($identityForObjectId->model)
-                        ->delete();
-                }
-            }
-
-            $collection->clear();
         }
     }
 
@@ -112,7 +91,8 @@ class RelationProcessor
     private function addToRelation(
         object                                                      $entity,
         HasOne|MorphOne|BelongsToMany|HasMany|MorphMany|MorphToMany $relation
-    ): void {
+    ): void
+    {
         /** @var Identity $identity */
         $identity = $this->getIdentityOrPersist($entity, $relation->getRelated()::class);
 

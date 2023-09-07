@@ -432,49 +432,6 @@ class EloquentityTest extends TestCase
         self::assertEquals('test 1', $model->property);
     }
 
-    public function testFlushDeletesDeletedEntitiesFromCollection(): void
-    {
-        TestModel1::$rows = [
-            array_merge(
-                self::DEFAULT_MODEL1_ATTRIBUTES,
-                [
-                    'property' => 'test',
-                ]
-            )
-        ];
-
-        TestModel2::$rows = [
-            array_merge(
-                self::DEFAULT_MODEL2_ATTRIBUTES,
-                [
-                    'id' => 1,
-                    'property' => 'test 1',
-                    'test_model1_id' => 1,
-                ]
-            ),
-            array_merge(
-                self::DEFAULT_MODEL2_ATTRIBUTES,
-                [
-                    'id' => 2,
-                    'property' => 'test 1',
-                    'test_model1_id' => 1,
-                ]
-            ),
-        ];
-
-        TestModel1::bootSushi();
-        TestModel2::bootSushi();
-
-        $entity = $this->sut->map(TestModel1::find(1), Entity1::class);
-
-        $entity->getEntities()->delete($entity->getEntities()->get(0));
-
-        $this->sut->flush(false);
-
-        self::assertCount(1, TestModel1::find(1)->entities);
-        self::assertEquals(2, TestModel1::find(1)->entities[0]->id);
-    }
-
     public function testFlushPersistsAndAssociatesEntity(): void
     {
         TestModel1::$rows = [
