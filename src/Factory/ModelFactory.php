@@ -2,7 +2,6 @@
 
 namespace Eloquentity\Factory;
 
-use Eloquentity\Attribute\Id;
 use Eloquentity\Exception\EloquentityException;
 use Eloquentity\Reflection\ReflectionClass;
 use Eloquentity\Reflection\ReflectionProperty;
@@ -18,7 +17,6 @@ class ModelFactory
      * @param class-string<T> $modelClass
      * @return T
      * @throws ReflectionException
-     * @throws EloquentityException
      */
     public function create(object $entity, string $modelClass): Model
     {
@@ -29,9 +27,13 @@ class ModelFactory
         /** @var T $model */
         $model = $modelClassReflection->newInstance();
 
-        $idProperty = $entityClassReflection->getProperty(Str::camel($model->getKeyName()));
+        try {
+            $idProperty = $entityClassReflection->getProperty(Str::camel($model->getKeyName()));
+        } catch (ReflectionException) {
+            $idProperty = null;
+        }
 
-        if ($idProperty->isInitialized($entity) && $idValue = $idProperty->getValue($entity)) {
+        if ($idProperty?->isInitialized($entity) && $idValue = $idProperty->getValue($entity)) {
             $model->{$model->getKeyName()} = $idValue;
         }
 
@@ -39,7 +41,7 @@ class ModelFactory
             $entityClassReflection->getProperties(),
             static function (ReflectionProperty $property) use ($entity, $idProperty, $model): bool {
                 return $property->isInitialized($entity)
-                    && $property->getName() !== $idProperty->getName()
+                    && ($idProperty && $property->getName() !== $idProperty->getName())
                     && !$model->isRelation($property->getName());
             }
         );

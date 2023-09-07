@@ -2,7 +2,6 @@
 
 namespace Eloquentity;
 
-use Eloquentity\Attribute\Id;
 use Eloquentity\Collection\TrackedCollection;
 use Eloquentity\Exception\EloquentityException;
 use Eloquentity\Factory\ModelFactory;

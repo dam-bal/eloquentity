@@ -2,8 +2,6 @@
 
 namespace Eloquentity\Tests\Unit\Factory;
 
-use Eloquentity\Attribute\Id;
-use Eloquentity\Exception\EloquentityException;
 use Eloquentity\Factory\ModelFactory;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Mockery\Adapter\Phpunit\MockeryTestCase;

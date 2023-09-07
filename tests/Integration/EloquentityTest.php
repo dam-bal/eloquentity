@@ -3,7 +3,6 @@
 namespace Eloquentity\Tests\Integration;
 
 use DateTime;
-use Eloquentity\Attribute\Id;
 use Eloquentity\Collection\ArrayCollection;
 use Eloquentity\Collection\CollectionInterface;
 use Eloquentity\Collection\TrackedCollection;

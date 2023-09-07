@@ -2,7 +2,6 @@
 
 namespace Eloquentity\Tests\Unit\Reflection;
 
-use Eloquentity\Attribute\Id;
 use Eloquentity\Reflection\ReflectionProperty;
 use PHPUnit\Framework\TestCase;
 
