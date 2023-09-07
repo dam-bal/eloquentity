@@ -17,3 +17,6 @@ composer require dam-bal/eloquentity
 
 * 0.1.0
     * Initial release
+* 0.2.0
+    * Id attribute removed, property of id (primary key) needs to match primary key on Model but in camel case format.
+    * id (primary key) is not required on entity class
