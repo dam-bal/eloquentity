@@ -2,10 +2,8 @@
 
 namespace Eloquentity\Processor;
 
-use Eloquentity\Collection\ArrayCollection;
 use Eloquentity\Collection\CollectionInterface;
 use Eloquentity\Collection\TrackedCollection;
-use Eloquentity\Exception\EloquentityException;
 use Eloquentity\Factory\ModelFactory;
 use Eloquentity\Identity\Identity;
 use Eloquentity\Identity\IdentityStorage;
