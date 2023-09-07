@@ -36,7 +36,6 @@ final class ClassWithProperty
 final class ClassWithIdAttribute
 {
     public function __construct(
-        #[Id]
         private readonly int $id
     ) {
     }

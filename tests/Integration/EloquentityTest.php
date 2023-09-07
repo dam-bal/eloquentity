@@ -702,7 +702,6 @@ class Entity1
      * @param CollectionInterface<Entity2>|null $entities
      */
     public function __construct(
-        #[Id]
         private ?int $id,
         private mixed $property = null,
         private mixed $valueObject = null,
@@ -783,7 +782,6 @@ class Entity2
     private ?Entity1 $parentEntity;
 
     public function __construct(
-        #[Id]
         private ?int $id,
         private mixed $property = null
     ) {

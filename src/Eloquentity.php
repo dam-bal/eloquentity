@@ -127,7 +127,6 @@ final class Eloquentity
      * @template T of Model
      * @param class-string<T> $modelClass
      * @throws ReflectionException
-     * @throws EloquentityException
      */
     public function persist(object $entity, string $modelClass): int|string|Stringable
     {

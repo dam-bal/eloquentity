@@ -67,7 +67,6 @@ final class EntityWithPropertyWithoutIdAttribute
 final class Entity
 {
     public function __construct(
-        #[Id]
         public readonly ?int $id,
         public readonly mixed $property
     ) {

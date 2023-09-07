@@ -37,7 +37,6 @@ final class EntityWithoutIdAttribute
 final class EntityWithIdAttribute
 {
     public function __construct(
-        #[Id]
         public readonly int $id
     ) {
     }

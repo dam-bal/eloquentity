@@ -23,14 +23,13 @@ use ReflectionException;
 class RelationProcessor
 {
     public function __construct(
-        private readonly ModelFactory $modelFactory,
+        private readonly ModelFactory    $modelFactory,
         private readonly IdentityStorage $identityStorage
     ) {
     }
 
     /**
      * @throws ReflectionException
-     * @throws EloquentityException
      */
     public function process(Relation $relation, ?object $value): void
     {
@@ -47,11 +46,10 @@ class RelationProcessor
     }
 
     /**
-     * @throws EloquentityException
      * @throws ReflectionException
      */
     private function processRelationThatReturnsModel(
-        ?object $value,
+        ?object                   $value,
         HasOne|BelongsTo|MorphOne $relation
     ): void {
         $isRelationInstanceOfBelongsTo = $relation instanceof BelongsTo;
@@ -77,18 +75,17 @@ class RelationProcessor
     /**
      * @template T of CollectionInterface
      * @param CollectionInterface<T> $collection
-     * @throws EloquentityException
      * @throws ReflectionException
      */
     private function processRelationThatReturnsCollectionOfModels(
-        CollectionInterface $collection,
+        CollectionInterface             $collection,
         HasMany|BelongsToMany|MorphMany $relation
     ): void {
-        if ($collection instanceof TrackedCollection) {
-            foreach ($collection->getAddedItems() as $entity) {
-                $this->addToRelation($entity, $relation);
-            }
+        foreach ($collection as $entity) {
+            $this->addToRelation($entity, $relation);
+        }
 
+        if ($collection instanceof TrackedCollection) {
             foreach ($collection->getDeletedItems() as $entity) {
                 $identityForObjectId = $this->identityStorage->getIdentityByObjectId(spl_object_id($entity));
 
@@ -108,23 +105,14 @@ class RelationProcessor
             }
 
             $collection->clear();
-
-            return;
-        }
-
-        if ($collection instanceof ArrayCollection) {
-            foreach ($collection as $entity) {
-                $this->addToRelation($entity, $relation);
-            }
         }
     }
 
     /**
-     * @throws EloquentityException
      * @throws ReflectionException
      */
     private function addToRelation(
-        object $entity,
+        object                                                      $entity,
         HasOne|MorphOne|BelongsToMany|HasMany|MorphMany|MorphToMany $relation
     ): void {
         /** @var Identity $identity */
@@ -137,7 +125,6 @@ class RelationProcessor
      * @template T of Model
      * @param class-string<T> $modelClass
      * @throws ReflectionException
-     * @throws EloquentityException
      */
     private function getIdentityOrPersist(object $entity, string $modelClass): ?Identity
     {
@@ -156,7 +143,6 @@ class RelationProcessor
      * @template T of Model
      * @param class-string<T> $modelClass
      * @throws ReflectionException
-     * @throws EloquentityException
      */
     private function persist(object $entity, string $modelClass): void
     {
