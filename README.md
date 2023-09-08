@@ -22,3 +22,5 @@ composer require dam-bal/eloquentity
     * id (primary key) is not required on entity class
 * 0.3.0
     * collection improvements, any iterable can be used
+* 0.4.0
+    * fix around id property, id property is not requrired on entity class
