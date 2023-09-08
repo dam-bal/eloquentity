@@ -32,20 +32,22 @@ class ModelFactory
             $idProperty = null;
         }
 
-        if ($idProperty?->isInitialized($entity) && $idValue = $idProperty->getValue($entity)) {
-            $model->{$model->getKeyName()} = $idValue;
-        }
-
         $entityProperties = array_filter(
             $entityClassReflection->getProperties(),
-            static function (ReflectionProperty $property) use ($entity, $idProperty, $model): bool {
-                return $property->isInitialized($entity)
-                    && ($idProperty && $property->getName() !== $idProperty->getName())
-                    && !$model->isRelation($property->getName());
+            static function (ReflectionProperty $property) use ($entity, $model): bool {
+                return $property->isInitialized($entity) && !$model->isRelation($property->getName());
             }
         );
 
         foreach ($entityProperties as $property) {
+            if (
+                $idProperty &&
+                $property->getValue($entity) === null &&
+                $property->getName() === $idProperty->getName()
+            ) {
+                continue;
+            }
+
             $model->setAttribute(Str::snake($property->getName()), $property->getValue($entity));
         }
 
