@@ -1,11 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany\\|Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphMany\\:\\:whereKey\\(\\)\\.$#"
-			count: 1
-			path: src/Processor/RelationProcessor.php
-
-		-
 			message: "#^Method Eloquentity\\\\Reflection\\\\ReflectionClass\\:\\:create\\(\\) should return static\\(Eloquentity\\\\Reflection\\\\ReflectionClass\\<T of object\\>\\) but returns Eloquentity\\\\Reflection\\\\ReflectionClass\\<T of object\\>\\.$#"
 			count: 1
 			path: src/Reflection/ReflectionClass.php

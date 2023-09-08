@@ -2,18 +2,14 @@
 
 namespace Eloquentity\Tests\Unit\Processor;
 
-use Eloquentity\Collection\ArrayCollection;
-use Eloquentity\Collection\TrackedCollection;
 use Eloquentity\Factory\ModelFactory;
 use Eloquentity\Identity\Identity;
 use Eloquentity\Identity\IdentityStorage;
 use Eloquentity\Processor\RelationProcessor;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Query\Builder;
 use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use Mockery\MockInterface;
@@ -45,7 +41,7 @@ class RelationProcessorTest extends MockeryTestCase
     {
         $entity = new Entity();
 
-        $value = new ArrayCollection([$entity]);
+        $value = [$entity];
 
         $modelMock = $this->getModelMock(1);
 
@@ -75,7 +71,7 @@ class RelationProcessorTest extends MockeryTestCase
     {
         $entity = new Entity();
 
-        $value = new ArrayCollection([$entity]);
+        $value = [$entity];
 
         $this->setupIdentityStorage(
             [
@@ -95,7 +91,7 @@ class RelationProcessorTest extends MockeryTestCase
     {
         $entity = new Entity();
 
-        $value = new ArrayCollection([$entity]);
+        $value = [$entity];
 
         $modelMock = $this->getModelMock(1);
 
@@ -118,9 +114,9 @@ class RelationProcessorTest extends MockeryTestCase
     {
         $entity = new Entity();
 
-        $value = new TrackedCollection();
+        $value = [];
 
-        $value->add($entity);
+        $value[] = $entity;
 
         $modelMock = $this->getModelMock(1);
 
@@ -137,67 +133,6 @@ class RelationProcessorTest extends MockeryTestCase
             ->save($modelMock);
 
         $this->sut->process($relationMock, $value);
-
-        self::assertEmpty($value->getAddedItems());
-    }
-
-    public function testItDeletesModelFromRelationThatIsCollectionForTrackedCollection(): void
-    {
-        $entity = new Entity();
-
-        $value = new TrackedCollection([$entity]);
-
-        $value->delete($value->get(0));
-
-        $modelMock = $this->getModelMock(1);
-
-        $this->setupIdentityStorage(
-            [
-                spl_object_id($entity) => new Identity($modelMock, $entity)
-            ]
-        );
-
-        $builderMock = Mockery::mock(Builder::class);
-        $builderMock->shouldIgnoreMissing();
-        $builderMock->expects()->delete();
-
-        $relationMock = $this->getRelationMock(HasMany::class, $modelMock);
-
-        $relationMock
-            ->expects()
-            ->whereKey($modelMock)
-            ->andReturn($builderMock);
-
-        $this->sut->process($relationMock, $value);
-
-        self::assertEmpty($value->getDeletedItems());
-    }
-
-    public function testItDetachesModelFromRelationThatIsCollectionForTrackedCollection(): void
-    {
-        $entity = new Entity();
-
-        $value = new TrackedCollection([$entity]);
-
-        $value->delete($value->get(0));
-
-        $modelMock = $this->getModelMock(1);
-
-        $this->setupIdentityStorage(
-            [
-                spl_object_id($entity) => new Identity($modelMock, $entity)
-            ]
-        );
-
-        $relationMock = $this->getRelationMock(BelongsToMany::class, $modelMock);
-
-        $relationMock
-            ->expects()
-            ->detach(1);
-
-        $this->sut->process($relationMock, $value);
-
-        self::assertEmpty($value->getDeletedItems());
     }
 
     public function testItSavesModelToRelationThatIsModel(): void

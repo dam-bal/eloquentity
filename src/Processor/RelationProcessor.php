@@ -2,10 +2,6 @@
 
 namespace Eloquentity\Processor;
 
-use Eloquentity\Collection\ArrayCollection;
-use Eloquentity\Collection\CollectionInterface;
-use Eloquentity\Collection\TrackedCollection;
-use Eloquentity\Exception\EloquentityException;
 use Eloquentity\Factory\ModelFactory;
 use Eloquentity\Identity\Identity;
 use Eloquentity\Identity\IdentityStorage;
@@ -29,25 +25,27 @@ class RelationProcessor
     }
 
     /**
+     * @param object|iterable<mixed>|null $value
      * @throws ReflectionException
-     * @throws EloquentityException
      */
-    public function process(Relation $relation, ?object $value): void
+    public function process(Relation $relation, object|iterable|null $value): void
     {
         if (
+            is_iterable($value) &&
             ($relation instanceof HasMany || $relation instanceof BelongsToMany || $relation instanceof MorphMany)
-            && $value instanceof CollectionInterface
         ) {
             $this->processRelationThatReturnsCollectionOfModels($value, $relation);
         }
 
-        if ($relation instanceof HasOne || $relation instanceof BelongsTo || $relation instanceof MorphOne) {
+        if (
+            (is_object($value) || $value === null) &&
+            ($relation instanceof HasOne || $relation instanceof BelongsTo || $relation instanceof MorphOne)
+        ) {
             $this->processRelationThatReturnsModel($value, $relation);
         }
     }
 
     /**
-     * @throws EloquentityException
      * @throws ReflectionException
      */
     private function processRelationThatReturnsModel(
@@ -75,52 +73,20 @@ class RelationProcessor
     }
 
     /**
-     * @template T of CollectionInterface
-     * @param CollectionInterface<T> $collection
-     * @throws EloquentityException
+     * @template T
+     * @param iterable<T> $collection
      * @throws ReflectionException
      */
     private function processRelationThatReturnsCollectionOfModels(
-        CollectionInterface $collection,
+        iterable $collection,
         HasMany|BelongsToMany|MorphMany $relation
     ): void {
-        if ($collection instanceof TrackedCollection) {
-            foreach ($collection->getAddedItems() as $entity) {
-                $this->addToRelation($entity, $relation);
-            }
-
-            foreach ($collection->getDeletedItems() as $entity) {
-                $identityForObjectId = $this->identityStorage->getIdentityByObjectId(spl_object_id($entity));
-
-                if ($identityForObjectId && $relation instanceof BelongsToMany) {
-                    $relation->detach($identityForObjectId->model->getKey());
-
-                    continue;
-                }
-
-                if ($identityForObjectId) {
-                    $identityForObjectId->setDeleted();
-
-                    $relation
-                        ->whereKey($identityForObjectId->model)
-                        ->delete();
-                }
-            }
-
-            $collection->clear();
-
-            return;
-        }
-
-        if ($collection instanceof ArrayCollection) {
-            foreach ($collection as $entity) {
-                $this->addToRelation($entity, $relation);
-            }
+        foreach ($collection as $entity) {
+            $this->addToRelation($entity, $relation);
         }
     }
 
     /**
-     * @throws EloquentityException
      * @throws ReflectionException
      */
     private function addToRelation(
@@ -137,7 +103,6 @@ class RelationProcessor
      * @template T of Model
      * @param class-string<T> $modelClass
      * @throws ReflectionException
-     * @throws EloquentityException
      */
     private function getIdentityOrPersist(object $entity, string $modelClass): ?Identity
     {
@@ -156,7 +121,6 @@ class RelationProcessor
      * @template T of Model
      * @param class-string<T> $modelClass
      * @throws ReflectionException
-     * @throws EloquentityException
      */
     private function persist(object $entity, string $modelClass): void
     {
