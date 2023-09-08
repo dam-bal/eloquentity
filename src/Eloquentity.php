@@ -189,13 +189,19 @@ final class Eloquentity
 
             $entityProperties = array_filter(
                 $entityClassReflection->getProperties(),
-                static function (ReflectionProperty $property) use ($entity, $model): bool {
-                    return $property->isInitialized($entity) &&
-                        $property->getName() !== Str::camel($model->getKeyName());
+                static function (ReflectionProperty $property) use ($entity): bool {
+                    return $property->isInitialized($entity);
                 }
             );
 
             foreach ($entityProperties as $property) {
+                if (
+                    $property->getValue($entity) === null &&
+                    $property->getName() === Str::camel($model->getKeyName())
+                ) {
+                    continue;
+                }
+
                 $propertyName = $property->getName();
                 $attributeName = Str::snake($propertyName);
 
