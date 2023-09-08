@@ -2,7 +2,6 @@
 
 namespace Eloquentity\Factory;
 
-use Eloquentity\Exception\EloquentityException;
 use Eloquentity\Reflection\ReflectionClass;
 use Eloquentity\Reflection\ReflectionProperty;
 use Illuminate\Database\Eloquent\Model;

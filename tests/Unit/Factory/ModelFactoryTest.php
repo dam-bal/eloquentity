@@ -57,13 +57,6 @@ class ModelWithRelation extends \Illuminate\Database\Eloquent\Model
     }
 }
 
-final class EntityWithPropertyWithoutIdAttribute
-{
-    public function __construct(public readonly int $id)
-    {
-    }
-}
-
 final class Entity
 {
     public function __construct(

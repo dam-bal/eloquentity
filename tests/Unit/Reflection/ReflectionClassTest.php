@@ -32,11 +32,3 @@ final class ClassWithProperty
     {
     }
 }
-
-final class ClassWithIdAttribute
-{
-    public function __construct(
-        private readonly int $id
-    ) {
-    }
-}

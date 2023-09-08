@@ -3,6 +3,7 @@
 namespace Eloquentity\Reflection;
 
 use Symfony\Component\PropertyInfo\Extractor\PhpStanExtractor;
+use Symfony\Component\PropertyInfo\Type;
 
 final class ReflectionProperty extends \ReflectionProperty
 {
@@ -10,6 +11,27 @@ final class ReflectionProperty extends \ReflectionProperty
 
     /** @var array<string, class-string|null> */
     private static array $types = [];
+
+    /** @var array<string, Type|null> */
+    private static array $typeInfo = [];
+
+    public function getTypeInfo(): ?Type
+    {
+        $index = sprintf('%s-%s', $this->getDeclaringClass()->getName(), $this->getName());
+
+        if (isset(static::$typeInfo[$index])) {
+            return static::$typeInfo[$index];
+        }
+
+        if (!self::$phpStanExtractor) {
+            self::$phpStanExtractor = new PhpStanExtractor();
+        }
+
+        return static::$typeInfo[$index] = self::$phpStanExtractor->getTypes(
+            $this->getDeclaringClass()->getName(),
+            $this->getName()
+        )[0] ?? null;
+    }
 
     /**
      * @return class-string|null

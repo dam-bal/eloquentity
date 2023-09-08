@@ -19,25 +19,28 @@ use ReflectionException;
 class RelationProcessor
 {
     public function __construct(
-        private readonly ModelFactory    $modelFactory,
+        private readonly ModelFactory $modelFactory,
         private readonly IdentityStorage $identityStorage
-    )
-    {
+    ) {
     }
 
     /**
+     * @param object|iterable<mixed>|null $value
      * @throws ReflectionException
      */
-    public function process(Relation $relation, ?object $value): void
+    public function process(Relation $relation, object|iterable|null $value): void
     {
         if (
+            is_iterable($value) &&
             ($relation instanceof HasMany || $relation instanceof BelongsToMany || $relation instanceof MorphMany)
-            && is_iterable($value)
         ) {
             $this->processRelationThatReturnsCollectionOfModels($value, $relation);
         }
 
-        if ($relation instanceof HasOne || $relation instanceof BelongsTo || $relation instanceof MorphOne) {
+        if (
+            (is_object($value) || $value === null) &&
+            ($relation instanceof HasOne || $relation instanceof BelongsTo || $relation instanceof MorphOne)
+        ) {
             $this->processRelationThatReturnsModel($value, $relation);
         }
     }
@@ -46,10 +49,9 @@ class RelationProcessor
      * @throws ReflectionException
      */
     private function processRelationThatReturnsModel(
-        ?object                   $value,
+        ?object $value,
         HasOne|BelongsTo|MorphOne $relation
-    ): void
-    {
+    ): void {
         $isRelationInstanceOfBelongsTo = $relation instanceof BelongsTo;
 
         if (!$value && $isRelationInstanceOfBelongsTo) {
@@ -76,10 +78,9 @@ class RelationProcessor
      * @throws ReflectionException
      */
     private function processRelationThatReturnsCollectionOfModels(
-        iterable                        $collection,
+        iterable $collection,
         HasMany|BelongsToMany|MorphMany $relation
-    ): void
-    {
+    ): void {
         foreach ($collection as $entity) {
             $this->addToRelation($entity, $relation);
         }
@@ -89,10 +90,9 @@ class RelationProcessor
      * @throws ReflectionException
      */
     private function addToRelation(
-        object                                                      $entity,
+        object $entity,
         HasOne|MorphOne|BelongsToMany|HasMany|MorphMany|MorphToMany $relation
-    ): void
-    {
+    ): void {
         /** @var Identity $identity */
         $identity = $this->getIdentityOrPersist($entity, $relation->getRelated()::class);
 

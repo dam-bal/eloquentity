@@ -3,9 +3,6 @@
 namespace Eloquentity\Tests\Integration;
 
 use DateTime;
-use Eloquentity\Collection\ArrayCollection;
-use Eloquentity\Collection\CollectionInterface;
-use Eloquentity\Collection\TrackedCollection;
 use Eloquentity\Eloquentity;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
@@ -206,11 +203,10 @@ class EloquentityTest extends TestCase
 
         $entity = $this->sut->map(TestModel1::find(1), Entity1::class);
 
-        self::assertInstanceOf(TrackedCollection::class, $entity->getEntities());
         self::assertCount(2, $entity->getEntities());
 
-        self::assertEquals('test 1', $entity->getEntities()->get(0)->getProperty());
-        self::assertEquals('test 2', $entity->getEntities()->get(1)->getProperty());
+        self::assertEquals('test 1', $entity->getEntityAtIndex(0)->getProperty());
+        self::assertEquals('test 2', $entity->getEntityAtIndex(1)->getProperty());
     }
 
     public function testMapSetsBelongsToRelationship(): void
@@ -421,7 +417,7 @@ class EloquentityTest extends TestCase
 
         $entity = $this->sut->map(TestModel1::find(1), Entity1::class);
 
-        $entity->getEntities()->add(new Entity2(null, 'test 1'));
+        $entity->addEntity(new Entity2(null, 'test 1'));
 
         $this->sut->flush(false);
 
@@ -494,7 +490,7 @@ class EloquentityTest extends TestCase
 
         $entity = $this->sut->map(TestModel1::find(1), Entity1::class);
 
-        $entity->getEntities()->get(1)->setProperty('test 123');
+        $entity->getEntityAtIndex(1)->setProperty('test 123');
 
         $this->sut->flush(false);
 
@@ -554,8 +550,8 @@ class EloquentityTest extends TestCase
 
         $entity = new Entity1(null, 'test');
 
-        $entity->getEntities()->add(new Entity2(null, 'test 1'));
-        $entity->getEntities()->add(new Entity2(null, 'test 2'));
+        $entity->addEntity(new Entity2(null, 'test 1'));
+        $entity->addEntity(new Entity2(null, 'test 2'));
 
         $id = $this->sut->persist($entity, TestModel1::class);
 
@@ -656,18 +652,18 @@ class TestModel2 extends Model
 class Entity1
 {
     /**
-     * @param CollectionInterface<Entity2>|null $entities
+     * @param Entity2[]|null $entities
      */
     public function __construct(
         private ?int $id,
         private mixed $property = null,
         private mixed $valueObject = null,
         private ?Entity2 $entity = null,
-        private ?CollectionInterface $entities = null,
+        private ?array $entities = null,
         private mixed $date = null,
         private mixed $testEnum = null
     ) {
-        $this->entities = new ArrayCollection();
+        $this->entities = [];
     }
 
     public function getId(): int
@@ -706,11 +702,21 @@ class Entity1
     }
 
     /**
-     * @return CollectionInterface<Entity2>|null
+     * @return Entity2[]|null
      */
-    public function getEntities(): ?CollectionInterface
+    public function getEntities(): ?array
     {
         return $this->entities;
+    }
+
+    public function addEntity(Entity2 $entity2): void
+    {
+        $this->entities[] = $entity2;
+    }
+
+    public function getEntityAtIndex(int $index): Entity2
+    {
+        return $this->entities[$index];
     }
 
     public function getDate(): mixed

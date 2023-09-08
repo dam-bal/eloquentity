@@ -2,8 +2,6 @@
 
 namespace Eloquentity\Tests\Unit\Processor;
 
-use Eloquentity\Collection\ArrayCollection;
-use Eloquentity\Collection\TrackedCollection;
 use Eloquentity\Factory\ModelFactory;
 use Eloquentity\Identity\Identity;
 use Eloquentity\Identity\IdentityStorage;
@@ -43,7 +41,7 @@ class RelationProcessorTest extends MockeryTestCase
     {
         $entity = new Entity();
 
-        $value = new ArrayCollection([$entity]);
+        $value = [$entity];
 
         $modelMock = $this->getModelMock(1);
 
@@ -73,7 +71,7 @@ class RelationProcessorTest extends MockeryTestCase
     {
         $entity = new Entity();
 
-        $value = new ArrayCollection([$entity]);
+        $value = [$entity];
 
         $this->setupIdentityStorage(
             [
@@ -93,7 +91,7 @@ class RelationProcessorTest extends MockeryTestCase
     {
         $entity = new Entity();
 
-        $value = new ArrayCollection([$entity]);
+        $value = [$entity];
 
         $modelMock = $this->getModelMock(1);
 
@@ -116,9 +114,9 @@ class RelationProcessorTest extends MockeryTestCase
     {
         $entity = new Entity();
 
-        $value = new TrackedCollection();
+        $value = [];
 
-        $value->add($entity);
+        $value[] = $entity;
 
         $modelMock = $this->getModelMock(1);
 

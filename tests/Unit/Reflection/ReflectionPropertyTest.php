@@ -26,22 +26,6 @@ final class Entity
 {
 }
 
-final class EntityWithoutIdAttribute
-{
-    public function __construct(
-        public readonly int $id
-    ) {
-    }
-}
-
-final class EntityWithIdAttribute
-{
-    public function __construct(
-        public readonly int $id
-    ) {
-    }
-}
-
 final class EntityWithCollection
 {
     /**

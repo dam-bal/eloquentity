@@ -2,7 +2,6 @@
 
 namespace Eloquentity;
 
-use Eloquentity\Collection\TrackedCollection;
 use Eloquentity\Exception\EloquentityException;
 use Eloquentity\Factory\ModelFactory;
 use Eloquentity\Identity\IdentityStorage;
@@ -95,7 +94,24 @@ final class Eloquentity
                             ?? $this->map($relationModel, $type, $withoutRelations);
                     }
 
-                    $properties[$propertyName] = new TrackedCollection($entities);
+                    $typeInfo = $property->getTypeInfo();
+
+                    if ($typeInfo && $typeInfo->getBuiltinType() === 'array') {
+                        $properties[$propertyName] = $entities;
+                    }
+
+                    if ($typeInfo && $typeInfo->getClassName() && $typeInfo->getBuiltinType() === 'object') {
+                        /** @var class-string $class */
+                        $class = $typeInfo->getClassName();
+
+                        $classRef = new ReflectionClass($class);
+
+                        if (!$classRef->isInstantiable() || $classRef->isInterface()) {
+                            throw new EloquentityException($class . ' is not instantiable.');
+                        }
+
+                        $properties[$propertyName] = new $class($entities);
+                    }
 
                     continue;
                 }
