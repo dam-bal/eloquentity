@@ -60,7 +60,7 @@ class RelationProcessor
 
         if ($value) {
             /** @var Identity $identity */
-            $identity = $this->getIdentityOrPersist($value, $relation->getRelated()::class);
+            $identity = $this->getIdentityOrPersist($value, $relation->getRelated()::class, null);
 
             if ($isRelationInstanceOfBelongsTo) {
                 $relation->associate($identity->model);
@@ -82,37 +82,31 @@ class RelationProcessor
         HasMany|BelongsToMany|MorphMany $relation
     ): void {
         foreach ($collection as $entity) {
-            $this->addToRelation($entity, $relation);
+            /** @var Identity $identity */
+            $identity = $this->getIdentityOrPersist($entity, $relation->getRelated()::class, $relation);
+
+            $relation->save($identity->model);
         }
     }
 
-    /**
-     * @throws ReflectionException
-     */
-    private function addToRelation(
-        object $entity,
-        HasOne|MorphOne|BelongsToMany|HasMany|MorphMany|MorphToMany $relation
-    ): void {
-        /** @var Identity $identity */
-        $identity = $this->getIdentityOrPersist($entity, $relation->getRelated()::class);
-
-        $relation->save($identity->model);
-    }
 
     /**
      * @template T of Model
      * @param class-string<T> $modelClass
      * @throws ReflectionException
      */
-    private function getIdentityOrPersist(object $entity, string $modelClass): ?Identity
-    {
+    private function getIdentityOrPersist(
+        object $entity,
+        string $modelClass,
+        HasOne|MorphOne|BelongsToMany|HasMany|MorphMany|MorphToMany|null $relation
+    ): ?Identity {
         $entityObjectId = spl_object_id($entity);
 
         if ($identityForObjectId = $this->identityStorage->getIdentityByObjectId($entityObjectId)) {
             return $identityForObjectId;
         }
 
-        $this->persist($entity, $modelClass);
+        $this->persist($entity, $modelClass, $relation);
 
         return $this->identityStorage->getIdentityByObjectId($entityObjectId);
     }
@@ -122,11 +116,20 @@ class RelationProcessor
      * @param class-string<T> $modelClass
      * @throws ReflectionException
      */
-    private function persist(object $entity, string $modelClass): void
-    {
+    private function persist(
+        object $entity,
+        string $modelClass,
+        HasOne|MorphOne|BelongsToMany|HasMany|MorphMany|MorphToMany|null $relation
+    ): void {
         $model = $this->modelFactory->create($entity, $modelClass);
 
-        $model->save();
+        if ($relation) {
+            $relation->save($model);
+        }
+
+        if (!$relation) {
+            $model->save();
+        }
 
         $this->identityStorage->addIdentity($model, $entity);
     }

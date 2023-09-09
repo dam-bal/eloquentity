@@ -56,15 +56,18 @@ class RelationProcessorTest extends MockeryTestCase
             ->create($entity, $modelMock::class)
             ->andReturn($modelMock);
 
-        $modelMock
+        $relationMock = $this->getRelationMock(HasMany::class, $modelMock);
+
+        $relationMock
             ->expects()
-            ->save();
+            ->save($modelMock)
+            ->twice();
 
         $this->identityStorageMock
             ->expects()
             ->addIdentity($modelMock, $entity);
 
-        $this->sut->process($this->getRelationMock(HasMany::class, $modelMock), $value);
+        $this->sut->process($relationMock, $value);
     }
 
     public function testItDoesNotPersistEntityIfItsInIdentityStorage(): void
