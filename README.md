@@ -24,3 +24,5 @@ composer require dam-bal/eloquentity
     * collection improvements, any iterable can be used
 * 0.4.0
     * fix around id property, id property is not requrired on entity class
+* 0.5.0
+    * general improvements / fixes
