@@ -26,3 +26,7 @@ composer require dam-bal/eloquentity
     * fix around id property, id property is not requrired on entity class
 * 0.5.0
     * general improvements / fixes
+* 0.5.1
+    * updated to work with illuminate/database 11
+* 0.5.2
+    * updated to work with illuminate/database 11
