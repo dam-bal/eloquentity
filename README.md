@@ -3,9 +3,22 @@
     <img width="360px" src="images/logo.png">
 </p>
 
-Eloquentity allows you to map eloquent models to entities, any changes made to those entities can be persisted (including relationships), and you can even persist new entities.
+You can find documentation [here](https://eloquentity-docs.vercel.app/).
 
-> This is still under development
+> [!WARNING]
+> Eloquentity is still under development.
+
+---
+
+Eloquentity is a powerful package that seamlessly integrates Eloquent models with the concept of entities in your Laravel application. 
+
+It allows you to effortlessly map your existing Eloquent models to entity objects, providing a more object-oriented approach to handling data. 
+
+With Eloquentity, any changes made to these entity objects can be easily persisted back to the database, preserving the integrity of your data and associated relationships. 
+
+Additionally, Eloquentity empowers you to create and persist entirely new entities, streamlining the process of working with complex data structures. 
+
+By bridging the gap between the object-oriented paradigm and the database layer, Eloquentity enhances code organization, maintainability, and overall development efficiency within your Laravel projects.
 
 ## Install
 
@@ -13,18 +26,6 @@ Eloquentity allows you to map eloquent models to entities, any changes made to t
 composer require dam-bal/eloquentity
 ```
 
-## Release History
-
-* 0.1.0
-    * Initial release
-* 0.2.0
-    * Id attribute removed, property of id (primary key) needs to match primary key on Model but in camel case format.
-    * id (primary key) is not required on entity class
-* 0.3.0
-    * collection improvements, any iterable can be used
-* 0.4.0
-    * fix around id property, id property is not requrired on entity class
-* 0.5.0
     * general improvements / fixes
 * 0.5.1
     * updated to work with illuminate/database 11
