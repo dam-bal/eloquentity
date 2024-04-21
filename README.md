@@ -25,9 +25,3 @@ By bridging the gap between the object-oriented paradigm and the database layer,
 ```sh
 composer require dam-bal/eloquentity
 ```
-
-    * general improvements / fixes
-* 0.5.1
-    * updated to work with illuminate/database 11
-* 0.5.2
-    * updated to work with illuminate/database 11
