@@ -16,7 +16,7 @@ use ReflectionException;
 use ReflectionNamedType;
 use Stringable;
 
-final class Eloquentity
+class Eloquentity
 {
     public function __construct(
         private readonly IdentityStorage $identityStorage,
